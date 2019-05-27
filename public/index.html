@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Task board · GraphQL Task Manager</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23e10098'/%3E%3Cpath d='M9 11h14M9 16h9M9 21h11' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+</head>
+<body>
+  <div id="login" class="login" hidden>
+    <form id="login-form" class="login-card">
+      <h1>Task board</h1>
+      <p class="muted">GraphQL · MongoDB · Redis</p>
+      <label>Email <input name="email" type="email" autocomplete="username" value="alice@example.com" required></label>
+      <label>Password <input name="password" type="password" autocomplete="current-password" value="demo-password" required></label>
+      <button type="submit" class="primary">Sign in</button>
+      <p class="muted small">Demo accounts: alice, bob, chidi (editors/owners) and dana (viewer) @example.com, password <code>demo-password</code>.</p>
+      <p id="login-error" class="error" role="alert"></p>
+    </form>
+  </div>
+
+  <div id="app" class="app" hidden>
+    <header class="topbar">
+      <div class="brand">
+        <span class="logo" aria-hidden="true"></span>
+        <select id="project-select" aria-label="Project"></select>
+        <span id="role-badge" class="badge"></span>
+      </div>
+      <div class="filters">
+        <input id="search" type="search" placeholder="Search title or WEB-12" aria-label="Search tasks">
+        <select id="assignee-filter" aria-label="Assignee"></select>
+        <label class="check"><input id="overdue-filter" type="checkbox"> Overdue</label>
+      </div>
+      <div class="session">
+        <span id="live" class="live" title="Subscription status">offline</span>
+        <span id="me" class="me"></span>
+        <button id="logout" class="ghost">Sign out</button>
+      </div>
+    </header>
+
+    <section class="stats" id="stats" aria-label="Project stats"></section>
+
+    <main class="workspace">
+      <div class="board" id="board" aria-label="Board"></div>
+      <aside class="inspector" aria-label="Request inspector">
+        <h2>GraphQL requests</h2>
+        <p class="muted small">Cost, Redis cache hits/misses and server time from each response's <code>extensions</code>.</p>
+        <ol id="requests" class="requests"></ol>
+        <h2>Live events</h2>
+        <ol id="events" class="events"></ol>
+      </aside>
+    </main>
+  </div>
+
+  <dialog id="task-dialog" class="task-dialog">
+    <form id="task-form" method="dialog">
+      <header>
+        <span id="task-key" class="key"></span>
+        <span id="task-rev" class="muted small"></span>
+        <button type="button" class="ghost close" data-close aria-label="Close">×</button>
+      </header>
+      <input name="title" class="title-input" required maxlength="200" aria-label="Title">
+      <div class="grid">
+        <label>Status <select name="status"></select></label>
+        <label>Priority <select name="priority"></select></label>
+        <label>Assignee <select name="assigneeId"></select></label>
+        <label>Due <input name="dueDate" type="date"></label>
+        <label class="wide">Labels <input name="labels" placeholder="comma separated"></label>
+        <label class="wide">Description <textarea name="description" rows="4" maxlength="10000"></textarea></label>
+      </div>
+      <p id="task-error" class="error" role="alert"></p>
+      <div class="actions">
+        <button type="button" id="delete-task" class="danger ghost">Delete</button>
+        <span class="spacer"></span>
+        <button type="submit" class="primary" id="save-task">Save</button>
+      </div>
+      <section class="comments">
+        <h3>Comments</h3>
+        <ol id="comment-list"></ol>
+        <div class="comment-new">
+          <input id="comment-input" placeholder="Add a comment" maxlength="5000" aria-label="New comment">
+          <button type="button" id="comment-send">Send</button>
+        </div>
+      </section>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
+<section id="normalize_text"></section>
+<section id="destroy_session"></section>
