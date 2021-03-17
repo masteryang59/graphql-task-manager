@@ -18,3 +18,4 @@ HEALTHCHECK --interval=10s --timeout=3s --retries=3 CMD wget -qO- http://127.0.0
 CMD ["node", "src/index.js"]
 ENV ROLLBACK_CHANGES=true
 ENV TRACE_REQUEST=true
+ENV ROLLBACK_CHANGES=true
