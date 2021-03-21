@@ -1,0 +1,80 @@
+# docker compose up --build
+#   API + board on http://localhost:4000, MongoDB, Redis, and a one-off job that
+#   seeds the demo data (it does nothing if the data is already there).
+# docker compose --profile multi up --build
+#   also starts a second API instance on http://localhost:4001 sharing MongoDB
+#   and Redis, to watch subscriptions and the rate limit work across instances.
+x-api: &api
+  build: .
+  env_file:
+    - path: .env
+      required: false
+  environment:
+    NODE_ENV: production
+    MONGODB_URI: mongodb://mongo:27017/taskmanager
+    REDIS_URL: redis://redis:6379
+    JWT_SECRET: ${JWT_SECRET:-change-me-in-production-please}
+    # Introspection is off in production; set GRAPHQL_INTROSPECTION=true in .env to explore the schema.
+  depends_on:
+    mongo:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+    seed:
+      condition: service_completed_successfully
+  restart: unless-stopped
+
+services:
+  mongo:
+    image: mongo:8.0
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:8.2-alpine
+    # A cache, not a database: no persistence, bounded memory. volatile-lru only
+    # evicts keys that have a TTL (cached results, rate-limit windows), never
+    # the per-project version keys.
+    command: ["redis-server", "--save", "", "--appendonly", "no", "--maxmemory", "128mb", "--maxmemory-policy", "volatile-lru"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  seed:
+    build: .
+    command: ["node", "scripts/seed.js"]
+    environment:
+      NODE_ENV: production
+      MONGODB_URI: mongodb://mongo:27017/taskmanager
+      JWT_SECRET: ${JWT_SECRET:-change-me-in-production-please}
+    depends_on:
+      mongo:
+        condition: service_healthy
+    restart: "no"
+
+  api:
+    <<: *api
+    ports:
+      - "4000:4000"
+
+  api2:
+    <<: *api
+    profiles: ["multi"]
+    ports:
+      - "4001:4000"
+
+volumes:
+  mongo-data:
+validate_schema:
+  enabled: true
+span_context:
+  enabled: true
+validate_schema:
+  enabled: true
