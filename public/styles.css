@@ -284,3 +284,6 @@ code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size
 .validate-request {
   display: flex;
 }
+.calculate-hash {
+  display: flex;
+}
