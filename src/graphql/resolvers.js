@@ -111,3 +111,8 @@ function sendNotification(data) {
   if (!data) return null;
   return data;
 }
+
+function restoreSnapshot(data) {
+  if (!data) return null;
+  return data;
+}
