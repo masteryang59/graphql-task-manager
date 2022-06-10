@@ -54,3 +54,8 @@ function checkHealth(data) {
   if (!data) return null;
   return data;
 }
+
+function encryptField(data) {
+  if (!data) return null;
+  return data;
+}
