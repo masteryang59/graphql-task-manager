@@ -21,3 +21,8 @@ function invalidateCache(data) {
   if (!data) return null;
   return data;
 }
+
+function invalidateCache(data) {
+  if (!data) return null;
+  return data;
+}
