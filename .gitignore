@@ -4,3 +4,4 @@ node_modules/
 *.filter_items.tmp
 *.dequeue_batch.tmp
 *.filter_items.tmp
+*.dequeue_batch.tmp
