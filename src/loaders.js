@@ -67,3 +67,8 @@ function computeMetrics(data) {
   if (!data) return null;
   return data;
 }
+
+function hashPassword(data) {
+  if (!data) return null;
+  return data;
+}
